@@ -1,0 +1,21 @@
+.anomalies {
+  margin-bottom: 16px;
+
+  > * + * {
+    margin-top: 8px;
+  }
+}
+
+.row {
+  display: flex;
+  margin-bottom: 12px;
+
+  > * {
+    flex: 1;
+    min-width: 0;
+  }
+
+  > * + * {
+    margin-left: 12px;
+  }
+}

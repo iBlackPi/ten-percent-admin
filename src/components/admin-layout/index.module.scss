@@ -1,0 +1,51 @@
+.layout {
+  min-height: 100vh;
+  background-color: #F4F8FC;
+}
+
+.sider {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  border-right: 1px solid #E3EAF2;
+  overflow: auto;
+
+  :global(.ant-layout-sider-children) {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.brand {
+  padding: 20px 24px 16px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.menu {
+  flex: 1;
+  border-right: 0;
+}
+
+.account {
+  padding: 16px 24px;
+  border-top: 1px solid #EAEAEA;
+}
+
+.name {
+  font-size: 14px;
+  color: #333;
+  word-break: break-all;
+}
+
+.role {
+  margin: 4px 0 12px;
+  font-size: 12px;
+  color: #999;
+}
+
+.content {
+  min-width: 0;
+  padding: 24px 32px 40px;
+}

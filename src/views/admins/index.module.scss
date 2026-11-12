@@ -1,0 +1,11 @@
+.role {
+  width: 120px;
+}
+
+.ops {
+  display: flex;
+
+  > * + * {
+    margin-left: 8px;
+  }
+}

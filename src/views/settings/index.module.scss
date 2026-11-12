@@ -1,0 +1,45 @@
+.tip {
+  margin-bottom: 16px;
+}
+
+.keyBlock + .keyBlock {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #EAEAEA;
+}
+
+.keyHead {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.keyTitle {
+  margin-right: 8px;
+  color: #333;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.hint {
+  margin: 0 0 12px;
+  color: #666;
+  font-size: 14px;
+}
+
+.info {
+  margin-bottom: 12px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+
+  > * + * {
+    margin-left: 8px;
+  }
+}
+
+.input {
+  width: 360px;
+}

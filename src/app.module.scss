@@ -1,0 +1,20 @@
+:global(*),
+:global(*::before),
+:global(*::after) {
+  box-sizing: border-box;
+}
+
+:global(html),
+:global(body) {
+  margin: 0;
+  background-color: #F4F8FC;
+  color: #1F2D3D;
+  -webkit-font-smoothing: antialiased;
+}
+
+.loading {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

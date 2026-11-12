@@ -1,0 +1,28 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #F4F8FC;
+}
+
+.panel {
+  width: 380px;
+  padding: 32px;
+  background-color: #FFF;
+  border: 1px solid #E3EAF2;
+  border-radius: 8px;
+}
+
+.title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.desc {
+  margin: 4px 0 24px;
+  font-size: 14px;
+  color: #999;
+}

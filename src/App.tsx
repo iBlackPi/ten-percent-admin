@@ -10,8 +10,11 @@ import { AdminsPage } from './views/admins';
 import { AuditPage } from './views/audit';
 import { DashboardPage } from './views/dashboard';
 import { LoginPage } from './views/login';
+import { ModelsPage } from './views/models';
+import { PromptsPage } from './views/prompts';
 import { ProvidersPage } from './views/providers';
 import { SettingsPage } from './views/settings';
+import { StaticAssetsPage } from './views/static-assets';
 import { TaskDetailPage } from './views/task-detail';
 import { TasksPage } from './views/tasks';
 import { UserDetailPage } from './views/user-detail';
@@ -19,7 +22,8 @@ import { UsersPage } from './views/users';
 import styles from './app.module.scss';
 
 const SECTION_PERMISSION: Record<string, Permission> = {
-  dashboard: 'read_dashboard', users: 'read_users', tasks: 'read_tasks', ai: 'read_analytics', admins: 'manage_admins', audit: 'security_audit', settings: 'manage_settings',
+  dashboard: 'read_dashboard', users: 'read_users', tasks: 'read_tasks', ai: 'read_analytics', models: 'manage_settings', prompts: 'manage_settings', 'static-assets': 'manage_settings',
+  admins: 'manage_admins', audit: 'security_audit', settings: 'manage_settings',
 };
 
 export const App = observer(() => {
@@ -44,9 +48,12 @@ export const App = observer(() => {
   else if (section === 'tasks' && sub) page = <TaskDetailPage key={sub} id={sub} />;
   else if (section === 'tasks') page = <TasksPage />;
   else if (section === 'ai') page = <ProvidersPage />;
+  else if (section === 'models') page = <ModelsPage />;
+  else if (section === 'prompts') page = <PromptsPage />;
   else if (section === 'admins') page = <AdminsPage />;
   else if (section === 'audit') page = <AuditPage />;
   else if (section === 'settings') page = <SettingsPage />;
+  else if (section === 'static-assets') page = <StaticAssetsPage />;
   else page = <DashboardPage />;
 
   return <AdminLayout section={required ? section : 'dashboard'}>{page}</AdminLayout>;

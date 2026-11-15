@@ -6,7 +6,7 @@ import type { AuditItem } from '../../models/types.ts';
 import { fmtDateTime } from '../../utils/format.ts';
 
 const PAGE_SIZE = 20;
-const ACTION: Record<string, string> = { 'admin.login': '登录', 'admin.logout': '退出登录', 'admin.create': '创建管理员', 'admin.update': '修改管理员' };
+const ACTION: Record<string, string> = { 'admin.login': '登录', 'admin.logout': '退出登录', 'admin.create': '创建管理员', 'admin.update': '修改管理员', 'user.credits.adjust': '调整用户果子' };
 
 /** 操作审计：登录、退出、管理员变更。普通查看数据不逐条记录。 */
 export const AuditPage = () => {

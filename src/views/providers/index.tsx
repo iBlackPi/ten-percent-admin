@@ -39,7 +39,7 @@ export const ProvidersPage = () => {
           size="small" rowKey={(r) => `${r.provider}:${r.model}:${r.reason}`} pagination={false} loading={!board} dataSource={board?.errors ?? []}
           columns={[
             { title: '服务商 / 模型', render: (_: unknown, r) => `${r.provider} / ${r.model}` },
-            { title: '原因（取前 80 字）', dataIndex: 'reason' },
+            { title: '原因（取前 160 字）', dataIndex: 'reason' },
             { title: '次数', dataIndex: 'count', align: 'right', width: 100 },
           ]}
         />

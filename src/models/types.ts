@@ -1,10 +1,47 @@
 export type AdminRole = 'super_admin' | 'operator' | 'viewer';
-export type Permission = 'read_dashboard' | 'read_analytics' | 'read_users' | 'read_tasks' | 'manage_admins' | 'security_audit' | 'manage_settings';
+export type Permission = 'read_dashboard' | 'read_analytics' | 'read_users' | 'read_tasks' | 'manage_admins' | 'security_audit' | 'manage_settings' | 'adjust_credits';
 
 /** 地图服务配置（Key 只回脱敏值） */
 /** from：Key 来自后台设置还是服务器 .env；都没有为 null */
 export interface MapKeyView { configured: boolean; masked: string; from: 'admin' | 'env' | null; updatedAt: string | null }
+/** 前端静态图片：path 是相对静态目录的路径，url 是公开链接 */
+export interface StaticAsset { path: string; url: string; size: number; uploadedAt: string }
 export interface MapConfigView { provider: 'tianditu'; browser: MapKeyView; server: MapKeyView }
+
+export interface ModelProviderSetting {
+  id: 'dashscope' | 'deepseek' | 'openai' | 'ark';
+  label: string;
+  kind: 'text' | 'image';
+  baseUrl: string;
+  model: string;
+  hasKey: boolean;
+  maskedKey: string;
+}
+
+export interface ImageRoutingView {
+  default: 'seedream' | 'qwen' | null;
+  fallback: boolean;
+  effective: 'seedream' | 'qwen' | null;
+  effectiveLabel: string | null;
+  problem: string | null;
+  configured: Array<'seedream' | 'qwen'>;
+  recentUsage: Array<{ provider: string; model: string; images: number; failed: number }>;
+}
+
+export interface ModelSettingsView { providers: ModelProviderSetting[]; imageRouting: ImageRoutingView }
+
+export interface PromptView {
+  key: string;
+  group: string;
+  title: string;
+  desc: string;
+  placeholders: string[];
+  needsJson: boolean;
+  default: string;
+  content: string;
+  overridden: boolean;
+  updatedAt: string | null;
+}
 
 export const ROLE_LABEL: Record<AdminRole, string> = { super_admin: '超级管理员', operator: '运营', viewer: '只读' };
 
@@ -27,13 +64,13 @@ export interface Anomaly { level: 'warn' | 'error'; title: string; detail: strin
 export interface Paged<T> { total: number; items: T[] }
 
 export interface UserRow {
-  id: string; email: string; kind: 'guest' | 'registered'; createdAt: string; lastSeenAt: string | null;
+  id: string; email: string; phone: string; kind: 'guest' | 'registered'; createdAt: string; lastSeenAt: string | null;
   tasks: number; succeeded: number; activeDays30: number; savedAssets: number; balance: number | null; memoryOn: boolean;
   lastTaskStatus: string | null; lastTaskStatusLabel: string;
 }
 
 export interface UserDetail {
-  id: string; email: string; kind: 'guest' | 'registered'; createdAt: string; lastSeenAt: string | null; balance: number | null;
+  id: string; email: string; phone: string; wechatBound: boolean; kind: 'guest' | 'registered'; createdAt: string; lastSeenAt: string | null; balance: number | null;
   memory: { enabled: boolean; autoLearn: boolean; activeItems: number };
   tasks: { total: number; succeeded: number; failed: number; blocked: number; activeDays30: number };
   tasksByType: { type: string; label: string; count: number }[];
@@ -53,7 +90,7 @@ export interface UserAnalytics {
 
 export interface TaskRow {
   id: string; userId: string; type: string; typeLabel: string; status: string; statusLabel: string; createdAt: string;
-  durationSec: number | null; estimatedCredits: number; settledCredits: number; costMilliYuan: number; providers: string; errorMessage: string;
+  durationSec: number | null; estimatedCredits: number; settledCredits: number; costMilliYuan: number; providers: string; errorMessage: string; callError: string;
 }
 
 export interface TasksOverview {

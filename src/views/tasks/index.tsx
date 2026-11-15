@@ -81,6 +81,7 @@ export const TasksPage = () => {
             { title: '果子(预估/结算)', align: 'right', render: (_: unknown, r) => `${fmtInt(r.estimatedCredits)} / ${fmtInt(r.settledCredits)}` },
             { title: '成本', dataIndex: 'costMilliYuan', align: 'right', render: (v: number) => (v ? fmtYuan(v) : '-') },
             { title: '失败原因', dataIndex: 'errorMessage', ellipsis: true },
+            { title: '模型报错', dataIndex: 'callError', ellipsis: true, render: (v: string) => v || '-' },
             { title: '用户', dataIndex: 'userId', render: (v: string) => <span className={styles.id}>{v.slice(0, 8)}</span> },
           ]}
         />

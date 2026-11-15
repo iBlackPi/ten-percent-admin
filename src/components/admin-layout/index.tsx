@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Button, Layout, Menu } from 'antd';
 import {
-  AuditOutlined, DashboardOutlined, SettingOutlined, LogoutOutlined, RobotOutlined, TeamOutlined, UnorderedListOutlined, UserOutlined,
+  ApiOutlined, AuditOutlined, DashboardOutlined, EditOutlined, PictureOutlined, SettingOutlined, LogoutOutlined, RobotOutlined, TeamOutlined, UnorderedListOutlined, UserOutlined,
 } from '@ant-design/icons';
 import type { Permission } from '../../models/types.ts';
 import { ROLE_LABEL } from '../../models/types.ts';
@@ -19,6 +19,9 @@ const NAV: NavItem[] = [
   { key: 'users', label: '用户', icon: <TeamOutlined />, permission: 'read_users' },
   { key: 'tasks', label: '任务', icon: <UnorderedListOutlined />, permission: 'read_tasks' },
   { key: 'ai', label: 'AI 服务商', icon: <RobotOutlined />, permission: 'read_analytics' },
+  { key: 'models', label: '模型配置', icon: <ApiOutlined />, permission: 'manage_settings' },
+  { key: 'prompts', label: '提示词', icon: <EditOutlined />, permission: 'manage_settings' },
+  { key: 'static-assets', label: '静态资源', icon: <PictureOutlined />, permission: 'manage_settings' },
   { key: 'admins', label: '管理员', icon: <UserOutlined />, permission: 'manage_admins' },
   { key: 'audit', label: '操作审计', icon: <AuditOutlined />, permission: 'security_audit' },
   { key: 'settings', label: '系统设置', icon: <SettingOutlined />, permission: 'manage_settings' },

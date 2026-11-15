@@ -1,7 +1,7 @@
 import { http } from './client.ts';
 import type {
   AdminAccount, AdminRole, MapConfigView, Anomaly, AuditItem, DateParams, MeResponse, Overview, Paged, ProviderBoard, TaskDetail, TaskRow, TasksOverview,
-  TimelineItem, TrendPoint, UserAnalytics, UserDetail, UserRow,
+  ModelSettingsView, PromptView, StaticAsset, TimelineItem, TrendPoint, UserAnalytics, UserDetail, UserRow,
 } from '../models/types.ts';
 
 const get = async <T>(url: string, params?: object): Promise<T> => (await http.get<T>(url, { params })).data;
@@ -19,6 +19,8 @@ export const api = {
   users: (p: { page: number; pageSize: number; keyword?: string; kind?: string; hasFailed?: boolean }) => get<Paged<UserRow>>('/users', p),
   userDetail: (id: string) => get<UserDetail>(`/users/${id}`),
   userTimeline: (id: string) => get<TimelineItem[]>(`/users/${id}/timeline`),
+  adjustCredits: async (id: string, body: { delta: number; reason: string }): Promise<{ before: number; after: number }> =>
+    (await http.post<{ before: number; after: number }>(`/users/${id}/credits`, body)).data,
 
   tasksOverview: (p: DateParams) => get<TasksOverview>('/tasks/overview', p),
   tasks: (p: DateParams & { page: number; pageSize: number; status?: string; type?: string; userId?: string; taskId?: string; provider?: string }) =>
@@ -33,4 +35,22 @@ export const api = {
 
   mapConfig: () => get<MapConfigView>('/settings/map'),
   saveMapConfig: async (body: { browserKey?: string; serverKey?: string }): Promise<MapConfigView> => (await http.put<MapConfigView>('/settings/map', body)).data,
+
+  staticAssets: async (): Promise<StaticAsset[]> => (await get<{ items: StaticAsset[] }>('/static-assets')).items,
+  uploadStaticAsset: async (file: File, folder: string): Promise<StaticAsset> => {
+    const form = new FormData();
+    form.append('folder', folder);
+    form.append('file', file);
+    return (await http.post<StaticAsset>('/static-assets', form, { timeout: 120_000 })).data;
+  },
+
+  modelSettings: () => get<ModelSettingsView>('/settings/models'),
+  saveModelProvider: async (id: string, body: { baseUrl: string; model: string; apiKey?: string }): Promise<ModelSettingsView> =>
+    (await http.put<ModelSettingsView>(`/settings/models/providers/${id}`, body)).data,
+  saveImageRouting: async (body: { default: 'seedream' | 'qwen'; fallback: boolean }): Promise<ModelSettingsView> =>
+    (await http.put<ModelSettingsView>('/settings/models/image-routing', body)).data,
+  testModel: async (providerId: string): Promise<{ ok: true; model: string }> => (await http.post<{ ok: true; model: string }>('/settings/models/test', { providerId })).data,
+  prompts: async (): Promise<PromptView[]> => (await get<{ items: PromptView[] }>('/settings/prompts')).items,
+  savePrompt: async (key: string, content: string): Promise<PromptView[]> => (await http.put<{ items: PromptView[] }>(`/settings/prompts/${key}`, { content })).data.items,
+  resetPrompt: async (key: string): Promise<PromptView[]> => (await http.delete<{ items: PromptView[] }>(`/settings/prompts/${key}`)).data.items,
 };

@@ -1,0 +1,63 @@
+.tip {
+  margin-bottom: 16px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+
+  > * + * {
+    margin-left: 8px;
+  }
+}
+
+.label {
+  color: #333;
+  font-size: 14px;
+}
+
+.folder {
+  width: 280px;
+}
+
+.hint {
+  margin: 12px 0 0;
+  color: #666;
+  font-size: 12px;
+}
+
+.search {
+  width: 240px;
+}
+
+.thumb {
+  display: block;
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+  background-color: #F5F5F5;
+  border-radius: 4px;
+}
+
+.path {
+  color: #333;
+  font-size: 12px;
+  word-break: break-all;
+}
+
+.linkCell {
+  display: flex;
+  align-items: center;
+
+  > * + * {
+    margin-left: 8px;
+  }
+}
+
+.link {
+  flex: 1;
+  min-width: 0;
+  color: #2176D9;
+  font-size: 12px;
+  word-break: break-all;
+}

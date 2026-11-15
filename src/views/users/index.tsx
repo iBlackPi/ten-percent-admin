@@ -10,7 +10,7 @@ import styles from './index.module.scss';
 
 const PAGE_SIZE = 20;
 
-/** 用户列表：只含元数据（脱敏邮箱、任务数、点数），不含原图、prompt、记忆内容。 */
+/** 用户列表：邮箱、手机号完整显示（仅内部员工可见），不含原图、prompt、记忆内容。 */
 export const UsersPage = () => {
   const [keyword, setKeyword] = useState('');
   const [kind, setKind] = useState<string | undefined>();
@@ -29,10 +29,10 @@ export const UsersPage = () => {
 
   return (
     <div>
-      <PageHeader title="用户" desc="按 userId 全串或邮箱片段搜索。邮箱脱敏显示，不展示用户的图片和描述文字。" />
+      <PageHeader title="用户" desc="可按手机号、邮箱片段或 userId 搜索。不展示用户的图片和描述文字。" />
       <Card>
         <div className={styles.filters}>
-          <Input.Search className={styles.search} allowClear placeholder="userId 或邮箱片段" onSearch={reset(setKeyword)} />
+          <Input.Search className={styles.search} allowClear placeholder="手机号、邮箱或 userId" onSearch={reset(setKeyword)} />
           <Select
             allowClear placeholder="用户类型" value={kind} onChange={reset(setKind)}
             options={[{ label: '注册用户', value: 'registered' }, { label: '游客', value: 'guest' }]}
@@ -44,7 +44,15 @@ export const UsersPage = () => {
           pagination={{ current: page, pageSize: PAGE_SIZE, total: data.total, showSizeChanger: false, onChange: setPage }}
           onRow={(r) => ({ onClick: () => go(`/users/${r.id}`) })}
           columns={[
-            { title: '用户', render: (_: unknown, r) => <div><div>{r.email || '游客'}</div><div className={styles.id}>{r.id}</div></div> },
+            {
+              title: '用户', render: (_: unknown, r) => (
+                <div>
+                  <div>{r.phone || r.email || '游客'}</div>
+                  {r.phone && r.email ? <div className={styles.sub}>{r.email}</div> : null}
+                  <div className={styles.id}>{r.id}</div>
+                </div>
+              ),
+            },
             { title: '类型', dataIndex: 'kind', render: (v: string) => (v === 'guest' ? <Tag>游客</Tag> : <Tag color="green">注册</Tag>) },
             { title: '注册时间', dataIndex: 'createdAt', render: fmtDateTime },
             { title: '最近活跃', dataIndex: 'lastSeenAt', render: fmtDateTime },

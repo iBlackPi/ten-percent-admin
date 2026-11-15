@@ -1,0 +1,124 @@
+.group {
+  margin-bottom: 32px;
+}
+
+.groupTitle {
+  margin: 0 0 4px;
+  color: #333;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.groupDesc {
+  margin: 0 0 16px;
+  color: #666;
+  font-size: 14px;
+}
+
+.section {
+  margin-bottom: 16px;
+  padding: 20px 24px;
+  border: 1px solid #EAEAEA;
+  border-radius: 8px;
+  background-color: #FFF;
+}
+
+.sectionTitle {
+  margin: 0 0 4px;
+  color: #333;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.tag {
+  margin-left: 8px;
+}
+
+.sectionDesc {
+  margin: 0 0 16px;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 0 -8px;
+
+  > * {
+    width: calc(50% - 16px);
+    margin: 0 8px 12px;
+  }
+}
+
+.formWide {
+  width: calc(100% - 16px) !important;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+
+  > * + * {
+    margin-left: 8px;
+  }
+}
+
+.switchRow {
+  display: flex;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.switchText {
+  margin-left: 10px;
+  color: #666;
+  font-size: 14px;
+}
+
+.effective {
+  margin: 14px 0 0;
+  color: #46B90C;
+  font-size: 14px;
+}
+
+.problem {
+  margin: 14px 0 0;
+  color: #D9221E;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.usage {
+  margin-top: 16px;
+  padding: 12px 16px;
+  border-radius: 8px;
+  background-color: #F5F5F5;
+}
+
+.usageTitle {
+  margin-bottom: 8px;
+  color: #666;
+  font-size: 12px;
+}
+
+.usageEmpty {
+  color: #999;
+  font-size: 14px;
+}
+
+.usageRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-size: 14px;
+}
+
+.usageModel {
+  color: #333;
+}
+
+.usageNum {
+  color: #666;
+}

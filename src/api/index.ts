@@ -1,7 +1,8 @@
 import { http } from './client.ts';
 import type {
-  AdminAccount, AdminRole, MapConfigView, Anomaly, AuditItem, DateParams, MeResponse, Overview, Paged, ProviderBoard, TaskDetail, TaskRow, TasksOverview,
-  ModelSettingsView, PromptView, StaticAsset, TimelineItem, TrendPoint, UserAnalytics, UserDetail, UserRow,
+  AdminAccount, AdminRole, FeatureMode, FeatureView, MapConfigView, Anomaly, AuditItem, DateParams, MeResponse, Overview, Paged, ProviderBoard, TaskDetail, TaskRow, TasksOverview,
+  ModelSettingsView, PriceOverridesInput, PromptView, StaticAsset, TimelineItem, TrendPoint, UserAnalytics, UserDetail, UserRow,
+  BehaviorEvent, BehaviorFeatures, BehaviorOverview, BehaviorParams, FunnelOptions, FunnelStep, PageRow, RetentionRow,
 } from '../models/types.ts';
 
 const get = async <T>(url: string, params?: object): Promise<T> => (await http.get<T>(url, { params })).data;
@@ -28,13 +29,24 @@ export const api = {
   taskDetail: (id: string) => get<TaskDetail>(`/tasks/${id}`),
   providers: (p: DateParams) => get<ProviderBoard>('/ai/providers', p),
 
+  behaviorOverview: (p: BehaviorParams) => get<BehaviorOverview>('/behavior/overview', p),
+  behaviorFeatures: (p: BehaviorParams) => get<BehaviorFeatures>('/behavior/features', p),
+  funnelOptions: () => get<FunnelOptions>('/behavior/funnel/steps'),
+  funnel: (p: BehaviorParams & { steps: string }) => get<FunnelStep[]>('/behavior/funnel', p),
+  retention: (p: BehaviorParams & { by: 'day' | 'platform' | 'feature' }) => get<RetentionRow[]>('/behavior/retention', p),
+  behaviorPages: (p: BehaviorParams) => get<PageRow[]>('/behavior/pages', p),
+  behaviorEvents: (p: BehaviorParams & { userId?: string; deviceId?: string; event?: string }) => get<BehaviorEvent[]>('/behavior/events', p),
+
   admins: () => get<AdminAccount[]>('/admins'),
   createAdmin: async (body: { email: string; displayName: string; password: string; role: AdminRole }): Promise<void> => { await http.post('/admins', body); },
   updateAdmin: async (id: string, body: { status?: 'active' | 'disabled'; role?: AdminRole; password?: string }): Promise<void> => { await http.patch(`/admins/${id}`, body); },
   audit: (p: { page: number; pageSize: number }) => get<Paged<AuditItem>>('/audit', p),
 
   mapConfig: () => get<MapConfigView>('/settings/map'),
-  saveMapConfig: async (body: { browserKey?: string; serverKey?: string }): Promise<MapConfigView> => (await http.put<MapConfigView>('/settings/map', body)).data,
+  saveMapConfig: async (body: { browserKey?: string; serverKey?: string; tencentStaticKey?: string }): Promise<MapConfigView> => (await http.put<MapConfigView>('/settings/map', body)).data,
+  features: async (): Promise<FeatureView[]> => (await get<{ items: FeatureView[] }>('/settings/features')).items,
+  saveFeature: async (key: string, body: { mode: FeatureMode; members: string[] }): Promise<FeatureView[]> =>
+    (await http.put<{ items: FeatureView[] }>(`/settings/features/${key}`, body)).data.items,
 
   staticAssets: async (): Promise<StaticAsset[]> => (await get<{ items: StaticAsset[] }>('/static-assets')).items,
   uploadStaticAsset: async (file: File, folder: string): Promise<StaticAsset> => {
@@ -45,6 +57,7 @@ export const api = {
   },
 
   modelSettings: () => get<ModelSettingsView>('/settings/models'),
+  savePrices: async (body: PriceOverridesInput): Promise<ModelSettingsView> => (await http.put<ModelSettingsView>('/settings/models/prices', body)).data,
   saveModelProvider: async (id: string, body: { baseUrl: string; model: string; apiKey?: string }): Promise<ModelSettingsView> =>
     (await http.put<ModelSettingsView>(`/settings/models/providers/${id}`, body)).data,
   saveImageRouting: async (body: { default: 'seedream' | 'qwen'; fallback: boolean }): Promise<ModelSettingsView> =>

@@ -10,7 +10,7 @@ import { useStores } from '../../stores/root.tsx';
 import { go } from '../../utils/router.ts';
 import styles from './index.module.scss';
 
-const DOT: Record<TimelineItem['type'], string> = { task: 'blue', credit: 'gold', moderation: 'red', asset: 'green' };
+const DOT: Record<TimelineItem['type'], string> = { task: 'blue', credit: 'gold', moderation: 'red', asset: 'green', behavior: 'gray' };
 
 /** 用户详情：回答“这个用户经历了什么”。默认不展示原图、prompt、记忆内容。 */
 export const UserDetailPage = observer(({ id }: { id: string }) => {

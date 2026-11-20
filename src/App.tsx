@@ -20,9 +20,10 @@ import { TasksPage } from './views/tasks';
 import { UserDetailPage } from './views/user-detail';
 import { UsersPage } from './views/users';
 import styles from './app.module.scss';
+import { BehaviorPage } from './views/behavior';
 
 const SECTION_PERMISSION: Record<string, Permission> = {
-  dashboard: 'read_dashboard', users: 'read_users', tasks: 'read_tasks', ai: 'read_analytics', models: 'manage_settings', prompts: 'manage_settings', 'static-assets': 'manage_settings',
+  dashboard: 'read_dashboard', behavior: 'read_analytics', users: 'read_users', tasks: 'read_tasks', ai: 'read_analytics', models: 'manage_settings', prompts: 'manage_settings', 'static-assets': 'manage_settings',
   admins: 'manage_admins', audit: 'security_audit', settings: 'manage_settings',
 };
 
@@ -43,6 +44,7 @@ export const App = observer(() => {
   let page: JSX.Element;
   if (!required) page = <DashboardPage />;
   else if (!session.can(required)) page = <Result status="403" title="当前角色没有权限访问这个页面" />;
+  else if (section === 'behavior') page = <BehaviorPage />;
   else if (section === 'users' && sub) page = <UserDetailPage key={sub} id={sub} />;
   else if (section === 'users') page = <UsersPage />;
   else if (section === 'tasks' && sub) page = <TaskDetailPage key={sub} id={sub} />;

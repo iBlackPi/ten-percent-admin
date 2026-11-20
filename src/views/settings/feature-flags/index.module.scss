@@ -1,0 +1,47 @@
+.tip {
+  margin-bottom: 16px;
+}
+
+.block + .block {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #EAEAEA;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.title {
+  margin-right: 8px;
+  color: #333;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.time {
+  margin-left: 8px;
+  color: #999;
+  font-size: 12px;
+}
+
+.modes {
+  margin-bottom: 12px;
+}
+
+.members {
+  margin-bottom: 8px;
+}
+
+.empty {
+  color: #999;
+  font-size: 14px;
+}
+
+.input {
+  display: block;
+  width: 480px;
+  margin-bottom: 12px;
+}

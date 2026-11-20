@@ -8,7 +8,8 @@ export const theme: ThemeConfig = {
     colorSuccess: '#46B90C',
     colorWarning: '#E6AD0C',
     colorError: '#D9221E',
-    colorInfo: '#2176D9',
+    // 提示类（message.info、Alert info）统一用品牌色，不用蓝色
+    colorInfo: '#12B886',
     colorBgLayout: '#F4F8FC',
     colorText: '#1F2D3D',
     colorTextSecondary: '#5B6B7B',

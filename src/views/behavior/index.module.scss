@@ -1,0 +1,77 @@
+.actions {
+  display: flex;
+  align-items: center;
+
+  > * + * {
+    margin-left: 8px;
+  }
+}
+
+.select {
+  width: 120px;
+}
+
+.row {
+  display: flex;
+  margin-bottom: 12px;
+
+  > * {
+    flex: 1;
+    min-width: 0;
+  }
+
+  > * + * {
+    margin-left: 12px;
+  }
+}
+
+.hint {
+  color: #999;
+}
+
+.tip {
+  margin: 0 0 16px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #666;
+}
+
+.empty {
+  padding: 40px 0;
+  font-size: 14px;
+  color: #999;
+  text-align: center;
+}
+
+.funnelPicker {
+  display: flex;
+  margin-bottom: 12px;
+
+  > * + * {
+    margin-left: 8px;
+  }
+}
+
+.stepSelect {
+  flex: 1;
+  min-width: 0;
+}
+
+.filters {
+  display: flex;
+  margin-bottom: 12px;
+
+  > * {
+    max-width: 240px;
+  }
+
+  > * + * {
+    margin-left: 8px;
+  }
+}
+
+.props {
+  font-size: 12px;
+  color: #666;
+  word-break: break-all;
+}

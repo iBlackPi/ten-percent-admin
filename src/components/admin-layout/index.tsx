@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Button, Layout, Menu } from 'antd';
 import {
-  ApiOutlined, AuditOutlined, DashboardOutlined, EditOutlined, PictureOutlined, SettingOutlined, LogoutOutlined, RobotOutlined, TeamOutlined, UnorderedListOutlined, UserOutlined,
+  ApiOutlined, AuditOutlined, DashboardOutlined, FundOutlined, EditOutlined, PictureOutlined, SettingOutlined, LogoutOutlined, RobotOutlined, TeamOutlined, UnorderedListOutlined, UserOutlined,
 } from '@ant-design/icons';
 import type { Permission } from '../../models/types.ts';
 import { ROLE_LABEL } from '../../models/types.ts';
@@ -16,6 +16,7 @@ interface NavItem { key: string; label: string; icon: ReactNode; permission: Per
 
 const NAV: NavItem[] = [
   { key: 'dashboard', label: '总览', icon: <DashboardOutlined />, permission: 'read_dashboard' },
+  { key: 'behavior', label: '用户行为', icon: <FundOutlined />, permission: 'read_analytics' },
   { key: 'users', label: '用户', icon: <TeamOutlined />, permission: 'read_users' },
   { key: 'tasks', label: '任务', icon: <UnorderedListOutlined />, permission: 'read_tasks' },
   { key: 'ai', label: 'AI 服务商', icon: <RobotOutlined />, permission: 'read_analytics' },

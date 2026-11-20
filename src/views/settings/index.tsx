@@ -4,6 +4,7 @@ import { api } from '../../api';
 import { Card, PageHeader } from '../../components/page-header';
 import type { MapConfigView, MapKeyView } from '../../models/types.ts';
 import { fmtDateTime } from '../../utils/format.ts';
+import { FeatureFlags } from './feature-flags';
 import styles from './index.module.scss';
 
 /** 用输入的 Key 请求一张天地图瓦片：能加载说明 Key 有效、当前域名在白名单里 */
@@ -82,7 +83,7 @@ export const SettingsPage = () => {
 
   useEffect(() => { void api.mapConfig().then(setView).catch((e: Error) => message.error(e.message)); }, []);
 
-  const save = (field: 'browserKey' | 'serverKey') => async (value: string) => {
+  const save = (field: 'browserKey' | 'serverKey' | 'tencentStaticKey') => async (value: string) => {
     try {
       setView(await api.saveMapConfig({ [field]: value }));
       message.success(value ? '已保存，用户端立即生效' : '已清空');
@@ -94,7 +95,7 @@ export const SettingsPage = () => {
   return (
     <div>
       <PageHeader title="系统设置" desc="平台级配置，保存后立即生效，所有操作都会写入审计。" />
-      <Card title="地图服务 · 天地图">
+      <Card className={styles.section} title="地图服务 · 天地图">
         <Alert
           className={styles.tip}
           type="info"
@@ -118,6 +119,17 @@ export const SettingsPage = () => {
           onSave={save('serverKey')}
         />
       </Card>
+      <Card className={styles.section} title="地图服务 · 腾讯位置服务">
+        <KeyRow
+          title="静态图 Key"
+          hint="小程序「Citywalk 路线图」的底图，由服务器代取，不会发给用户端，加密保存。需在腾讯位置服务控制台为这个 Key 开通「静态图」服务；静态图有每日调用上限，同一张底图服务器会缓存一天。"
+          placeholder="粘贴腾讯位置服务 Key"
+          info={view?.tencentStatic}
+          canTest={false}
+          onSave={save('tencentStaticKey')}
+        />
+      </Card>
+      <FeatureFlags />
     </div>
   );
 };

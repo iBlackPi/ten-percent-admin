@@ -6,7 +6,10 @@ export type Permission = 'read_dashboard' | 'read_analytics' | 'read_users' | 'r
 export interface MapKeyView { configured: boolean; masked: string; from: 'admin' | 'env' | null; updatedAt: string | null }
 /** 前端静态图片：path 是相对静态目录的路径，url 是公开链接 */
 export interface StaticAsset { path: string; url: string; size: number; uploadedAt: string }
-export interface MapConfigView { provider: 'tianditu'; browser: MapKeyView; server: MapKeyView }
+export interface MapConfigView { provider: 'tianditu'; browser: MapKeyView; server: MapKeyView; tencentStatic: MapKeyView }
+/** 灰度开关：off 关闭 / whitelist 只对白名单 / all 全量 */
+export type FeatureMode = 'off' | 'whitelist' | 'all';
+export interface FeatureView { key: 'video' | 'live'; label: string; mode: FeatureMode; members: Array<{ id: string; label: string }>; updatedAt: string | null }
 
 export interface ModelProviderSetting {
   id: 'dashscope' | 'deepseek' | 'openai' | 'ark';
@@ -28,7 +31,23 @@ export interface ImageRoutingView {
   recentUsage: Array<{ provider: string; model: string; images: number; failed: number }>;
 }
 
-export interface ModelSettingsView { providers: ModelProviderSetting[]; imageRouting: ImageRoutingView }
+export interface ModelPriceRow {
+  id: string; label: string; provider: 'seedream' | 'qwen';
+  /** 单次估算成本（元）：典型尺寸、不带参考图 */
+  costYuan: number;
+  autoGenerate: number; autoEdit: number;
+  overrideGenerate: number | null; overrideEdit: number | null;
+  generate: number; edit: number;
+}
+export interface SinglePrice { auto: number; override: number | null; current: number }
+export interface PricesView { yuanPerCredit: number; models: ModelPriceRow[]; enhanceAi: SinglePrice; eraseVolc: SinglePrice }
+export interface PriceOverridesInput {
+  models: Record<string, { generate?: number; edit?: number }>;
+  enhanceAi?: number;
+  eraseVolc?: number;
+}
+
+export interface ModelSettingsView { providers: ModelProviderSetting[]; imageRouting: ImageRoutingView; prices: PricesView }
 
 export interface PromptView {
   key: string;
@@ -78,7 +97,7 @@ export interface UserDetail {
 }
 
 export interface TimelineItem {
-  id: string; type: 'task' | 'credit' | 'moderation' | 'asset'; title: string; occurredAt: string; taskId?: string; status?: string;
+  id: string; type: 'task' | 'credit' | 'moderation' | 'asset' | 'behavior'; title: string; occurredAt: string; taskId?: string; status?: string;
 }
 
 export interface UserAnalytics {
@@ -130,3 +149,35 @@ export interface AuditItem {
 }
 
 export interface DateParams { from: string; to: string }
+
+/** 用户行为（埋点）筛选：端、用户类型（未登录 / 游客 / 正式用户） */
+export type BehaviorPlatform = 'web' | 'h5' | 'weapp';
+export type BehaviorKind = 'anon' | 'guest' | 'member';
+export interface BehaviorParams extends DateParams { platform?: BehaviorPlatform; kind?: BehaviorKind }
+
+export interface BehaviorOverview {
+  totals: { uv: number; users: number; sessions: number; pv: number; events: number; avgSessionSec: number | null; p50SessionSec: number | null };
+  daily: Array<{ day: string; uv: number; users: number; pv: number; web: number; h5: number; weapp: number }>;
+  channels: Array<{ channel: string; uv: number }>;
+}
+
+export interface BehaviorToolRow {
+  tool: string; openUv: number; runUv: number; runs: number; succeeded: number; failed: number;
+  successRate: number | null; avgMs: number | null; runRate: number | null;
+}
+export interface BehaviorAction { count: number; uv: number; ok: number; fail: number }
+export interface BehaviorFeatures {
+  tools: BehaviorToolRow[];
+  failures: Array<{ tool: string; reason: string; count: number }>;
+  actions: Record<string, BehaviorAction | undefined>;
+  orders: { created: number; paid: number; paidUsers: number; paidFen: number };
+}
+
+export interface FunnelStep { key: string; label: string; count: number }
+export interface FunnelOptions { steps: Array<{ key: string; label: string }>; presets: Array<{ key: string; label: string; steps: string[] }> }
+export interface RetentionRow { group: string; size: number; d1: number | null; d3: number | null; d7: number | null; d14: number | null }
+export interface PageRow { page: string; pv: number; uv: number; avgMs: number | null; exitRate: number | null }
+export interface BehaviorEvent {
+  id: string; event: string; userId: string | null; deviceId: string; sessionId: string; platform: string; page: string | null;
+  props: Record<string, unknown>; createdAt: string;
+}

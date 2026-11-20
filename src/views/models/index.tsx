@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
-import { Button, Form, Input, Radio, Switch, Tag, message } from 'antd';
+import { Button, Form, Input, InputNumber, Radio, Switch, Table, Tag, message } from 'antd';
 import { api } from '../../api';
 import { PageHeader } from '../../components/page-header';
-import type { ImageRoutingView, ModelProviderSetting, ModelSettingsView } from '../../models/types.ts';
+import type { ImageRoutingView, ModelPriceRow, ModelProviderSetting, ModelSettingsView, PricesView } from '../../models/types.ts';
 import styles from './index.module.scss';
 
 const GROUPS: Array<{ kind: ModelProviderSetting['kind']; title: string; desc: string }> = [
   { kind: 'text', title: '文本模型', desc: '小果理解一句话、看图问问、闲聊。' },
-  { kind: 'image', title: '生图模型', desc: 'AI 出图、AI 改图、AI 变清晰。接口地址和模型名一般不用改。' },
+  { kind: 'image', title: '生图模型', desc: 'AI 出图、AI 改图、AI 变清晰。方舟的模型名可以填多个，按优先级依次尝试，也都会出现在小程序/H5 创作页底部的模型选择里（果子数按模型成本自动折算，排第一的是默认模型）；百炼的 qwen-image 系列同样可选。换模型、换地址在这里改，保存后立即生效，不用发布。' },
 ];
 
 const IMAGE_LABEL = { seedream: '火山方舟 Seedream', qwen: '阿里云百炼 qwen-image' } as const;
@@ -47,7 +47,14 @@ const ProviderCard = ({ provider, onSaved }: { provider: ModelProviderSetting; o
       <Form layout="vertical" initialValues={{ baseUrl: provider.baseUrl, model: provider.model }} onFinish={(values) => void save(values)}>
         <div className={styles.form}>
           <Form.Item label="接口地址" name="baseUrl" rules={[{ required: true, type: 'url', message: '请输入有效地址' }]}><Input /></Form.Item>
-          <Form.Item label="模型" name="model" rules={[{ required: true, message: '请输入模型名' }]}><Input /></Form.Item>
+          <Form.Item
+            label={provider.id === 'ark' ? '模型（可填多个，按优先级）' : '模型'}
+            name="model"
+            rules={[{ required: true, message: '请输入模型名' }]}
+            extra={provider.id === 'ark' ? '多个模型用英文逗号隔开，排在前面的优先；前一个调用失败才会用后一个。例：doubao-seedream-5-5-261028,doubao-seedream-5-0-flash-260915,doubao-seedream-5-0-pro-260628' : undefined}
+          >
+            <Input />
+          </Form.Item>
           <Form.Item className={styles.formWide} label="API Key" name="apiKey">
             <Input.Password autoComplete="new-password" placeholder={provider.hasKey ? '不修改可留空' : '请输入 API Key'} />
           </Form.Item>
@@ -109,6 +116,87 @@ const ImageRoutingCard = ({ routing, onSaved }: { routing: ImageRoutingView; onS
   );
 };
 
+type Draft = Record<string, { generate: number | null; edit: number | null }>;
+
+/**
+ * 果子价格：临时调价，保存后立即生效，不用发布。
+ * 每格留空 = 按成本自动折算（1 果子按 0.05 元成本）；填了就以填的为准。价格至少 1 果子。
+ * 改价只影响之后新建的任务，已经扣下的果子不变。
+ */
+const PricesCard = ({ prices, onSaved }: { prices: PricesView; onSaved: (next: ModelSettingsView) => void }) => {
+  const [saving, setSaving] = useState(false);
+  const initial = (): Draft => Object.fromEntries(prices.models.map((m) => [m.id, { generate: m.overrideGenerate, edit: m.overrideEdit }]));
+  const [draft, setDraft] = useState<Draft>(initial);
+  const [enhance, setEnhance] = useState<number | null>(prices.enhanceAi.override);
+  const [erase, setErase] = useState<number | null>(prices.eraseVolc.override);
+  useEffect(() => { setDraft(initial()); setEnhance(prices.enhanceAi.override); setErase(prices.eraseVolc.override); }, [prices]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const set = (id: string, key: 'generate' | 'edit', value: number | null) => setDraft((d) => ({ ...d, [id]: { ...d[id]!, [key]: value } }));
+  const save = async () => {
+    setSaving(true);
+    try {
+      const models: Record<string, { generate?: number; edit?: number }> = {};
+      for (const [id, v] of Object.entries(draft)) {
+        const row: { generate?: number; edit?: number } = {};
+        if (v.generate !== null) row.generate = v.generate;
+        if (v.edit !== null) row.edit = v.edit;
+        if (row.generate !== undefined || row.edit !== undefined) models[id] = row;
+      }
+      onSaved(await api.savePrices({ models, ...(enhance !== null ? { enhanceAi: enhance } : {}), ...(erase !== null ? { eraseVolc: erase } : {}) }));
+      message.success('价格已保存，新任务立即按新价格收费');
+    } catch (error) {
+      message.error((error as Error).message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const cell = (row: ModelPriceRow, key: 'generate' | 'edit') => {
+    const auto = key === 'generate' ? row.autoGenerate : row.autoEdit;
+    return (
+      <InputNumber
+        min={1} max={500} precision={0} placeholder={`自动 ${auto}`} value={draft[row.id]?.[key] ?? null}
+        onChange={(v) => set(row.id, key, typeof v === 'number' ? v : null)}
+      />
+    );
+  };
+  const margin = (row: ModelPriceRow, credits: number) => (credits > 0 ? `${Math.round((1 - row.costYuan / (credits * 0.09)) * 100)}%` : '-');
+
+  return (
+    <section className={styles.section}>
+      <h3 className={styles.sectionTitle}>果子价格</h3>
+      <p className={styles.sectionDesc}>
+        用户在创作页选哪个模型，就按哪个模型的价格扣果子。每格留空 = 按成本自动折算（1 果子按 {prices.yuanPerCredit} 元成本）；填了就以填的为准。
+        改价只影响之后新建的任务。毛利按最低档充值价（0.09 元/果子）估算，只算生图模型成本。
+      </p>
+      <Table<ModelPriceRow>
+        size="small" pagination={false} rowKey="id" dataSource={prices.models}
+        columns={[
+          { title: '模型', dataIndex: 'label', render: (_, r) => <span>{r.label}<span className={styles.modelId}>{r.id}</span></span> },
+          { title: '成本（元/次）', dataIndex: 'costYuan', width: 110, render: (v: number) => v.toFixed(2) },
+          { title: '出图（果子）', width: 130, render: (_, r) => cell(r, 'generate') },
+          { title: '改图（果子）', width: 130, render: (_, r) => cell(r, 'edit') },
+          { title: '现在收（出图/改图）', width: 150, render: (_, r) => `${r.generate} / ${r.edit}` },
+          { title: '出图毛利', width: 90, render: (_, r) => margin(r, r.generate) },
+        ]}
+      />
+      <div className={styles.priceExtra}>
+        <span>AI 变清晰</span>
+        <InputNumber min={1} max={500} precision={0} placeholder={`自动 ${prices.enhanceAi.auto}`} value={enhance} onChange={(v) => setEnhance(typeof v === 'number' ? v : null)} />
+        <span className={styles.priceNote}>现在收 {prices.enhanceAi.current} 果子，固定用最便宜的 Flash</span>
+      </div>
+      <div className={styles.priceExtra}>
+        <span>精准去除</span>
+        <InputNumber min={1} max={500} precision={0} placeholder={`默认 ${prices.eraseVolc.auto}`} value={erase} onChange={(v) => setErase(typeof v === 'number' ? v : null)} />
+        <span className={styles.priceNote}>现在收 {prices.eraseVolc.current} 果子，火山图像擦除修复，成本约 0.002 元</span>
+      </div>
+      <div className={styles.actions}>
+        <Button type="primary" loading={saving} onClick={() => void save()}>保存价格</Button>
+      </div>
+    </section>
+  );
+};
+
 /** 模型配置：文本 / 生图模型的密钥、接口地址、模型名和默认生图模型。密钥加密保存，页面只显示脱敏后的内容。 */
 export const ModelsPage = () => {
   const [state, setState] = useState<ModelSettingsView | null>(null);
@@ -128,6 +216,7 @@ export const ModelsPage = () => {
             <h2 className={styles.groupTitle}>{group.title}</h2>
             <p className={styles.groupDesc}>{group.desc}</p>
             {group.kind === 'image' ? <ImageRoutingCard routing={state.imageRouting} onSaved={setState} /> : null}
+            {group.kind === 'image' ? <PricesCard prices={state.prices} onSaved={setState} /> : null}
             {items.map((provider) => <ProviderCard key={provider.id} provider={provider} onSaved={setState} />)}
           </div>
         );

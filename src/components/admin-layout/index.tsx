@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { observer } from 'mobx-react-lite';
 import { Button, Layout, Menu } from 'antd';
 import {
-  ApiOutlined, AuditOutlined, DashboardOutlined, FundOutlined, EditOutlined, PictureOutlined, SettingOutlined, LogoutOutlined, RobotOutlined, TeamOutlined, UnorderedListOutlined, UserOutlined,
+  ApiOutlined, AuditOutlined, DashboardOutlined, MessageOutlined, FundOutlined, EditOutlined, PictureOutlined, SettingOutlined, LogoutOutlined, RobotOutlined, TeamOutlined, UnorderedListOutlined, UserOutlined,
 } from '@ant-design/icons';
 import type { Permission } from '../../models/types.ts';
 import { ROLE_LABEL } from '../../models/types.ts';
@@ -19,6 +19,7 @@ const NAV: NavItem[] = [
   { key: 'behavior', label: '用户行为', icon: <FundOutlined />, permission: 'read_analytics' },
   { key: 'users', label: '用户', icon: <TeamOutlined />, permission: 'read_users' },
   { key: 'tasks', label: '任务', icon: <UnorderedListOutlined />, permission: 'read_tasks' },
+  { key: 'feedback', label: '用户反馈', icon: <MessageOutlined />, permission: 'manage_feedback' },
   { key: 'ai', label: 'AI 服务商', icon: <RobotOutlined />, permission: 'read_analytics' },
   { key: 'models', label: '模型配置', icon: <ApiOutlined />, permission: 'manage_settings' },
   { key: 'prompts', label: '提示词', icon: <EditOutlined />, permission: 'manage_settings' },

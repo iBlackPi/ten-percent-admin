@@ -2,7 +2,7 @@ import { http } from './client.ts';
 import type {
   AdminAccount, AdminRole, FeatureMode, FeatureView, MapConfigView, Anomaly, AuditItem, DateParams, MeResponse, Overview, Paged, ProviderBoard, TaskDetail, TaskRow, TasksOverview,
   ModelSettingsView, PriceOverridesInput, PromptView, StaticAsset, TimelineItem, TrendPoint, UserAnalytics, UserDetail, UserRow,
-  BehaviorEvent, BehaviorFeatures, BehaviorOverview, BehaviorParams, FunnelOptions, FunnelStep, PageRow, RetentionRow,
+  FeedbackItem, FeedbackList, FeedbackStatus, BehaviorEvent, BehaviorFeatures, BehaviorOverview, BehaviorParams, FunnelOptions, FunnelStep, PageRow, RetentionRow,
 } from '../models/types.ts';
 
 const get = async <T>(url: string, params?: object): Promise<T> => (await http.get<T>(url, { params })).data;
@@ -36,6 +36,9 @@ export const api = {
   retention: (p: BehaviorParams & { by: 'day' | 'platform' | 'feature' }) => get<RetentionRow[]>('/behavior/retention', p),
   behaviorPages: (p: BehaviorParams) => get<PageRow[]>('/behavior/pages', p),
   behaviorEvents: (p: BehaviorParams & { userId?: string; deviceId?: string; event?: string }) => get<BehaviorEvent[]>('/behavior/events', p),
+
+  feedbacks: (p: { page: number; pageSize: number; status?: string; category?: string; keyword?: string; id?: string }) => get<FeedbackList>('/feedback', p),
+  updateFeedback: async (id: string, body: { status?: FeedbackStatus; adminNote?: string }): Promise<FeedbackItem> => (await http.patch<FeedbackItem>(`/feedback/${id}`, body)).data,
 
   admins: () => get<AdminAccount[]>('/admins'),
   createAdmin: async (body: { email: string; displayName: string; password: string; role: AdminRole }): Promise<void> => { await http.post('/admins', body); },

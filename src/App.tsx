@@ -9,6 +9,7 @@ import { useRoute } from './utils/router.ts';
 import { AdminsPage } from './views/admins';
 import { AuditPage } from './views/audit';
 import { DashboardPage } from './views/dashboard';
+import { FeedbackPage } from './views/feedback';
 import { LoginPage } from './views/login';
 import { ModelsPage } from './views/models';
 import { PromptsPage } from './views/prompts';
@@ -23,7 +24,7 @@ import styles from './app.module.scss';
 import { BehaviorPage } from './views/behavior';
 
 const SECTION_PERMISSION: Record<string, Permission> = {
-  dashboard: 'read_dashboard', behavior: 'read_analytics', users: 'read_users', tasks: 'read_tasks', ai: 'read_analytics', models: 'manage_settings', prompts: 'manage_settings', 'static-assets': 'manage_settings',
+  dashboard: 'read_dashboard', behavior: 'read_analytics', users: 'read_users', tasks: 'read_tasks', ai: 'read_analytics', models: 'manage_settings', prompts: 'manage_settings', 'static-assets': 'manage_settings', feedback: 'manage_feedback',
   admins: 'manage_admins', audit: 'security_audit', settings: 'manage_settings',
 };
 
@@ -55,6 +56,7 @@ export const App = observer(() => {
   else if (section === 'admins') page = <AdminsPage />;
   else if (section === 'audit') page = <AuditPage />;
   else if (section === 'settings') page = <SettingsPage />;
+  else if (section === 'feedback') page = <FeedbackPage />;
   else if (section === 'static-assets') page = <StaticAssetsPage />;
   else page = <DashboardPage />;
 

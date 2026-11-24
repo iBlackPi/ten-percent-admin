@@ -1,5 +1,5 @@
 export type AdminRole = 'super_admin' | 'operator' | 'viewer';
-export type Permission = 'read_dashboard' | 'read_analytics' | 'read_users' | 'read_tasks' | 'manage_admins' | 'security_audit' | 'manage_settings' | 'adjust_credits';
+export type Permission = 'read_dashboard' | 'read_analytics' | 'read_users' | 'read_tasks' | 'manage_admins' | 'security_audit' | 'manage_settings' | 'adjust_credits' | 'manage_feedback';
 
 /** 地图服务配置（Key 只回脱敏值） */
 /** from：Key 来自后台设置还是服务器 .env；都没有为 null */
@@ -178,6 +178,16 @@ export interface FunnelOptions { steps: Array<{ key: string; label: string }>; p
 export interface RetentionRow { group: string; size: number; d1: number | null; d3: number | null; d7: number | null; d14: number | null }
 export interface PageRow { page: string; pv: number; uv: number; avgMs: number | null; exitRate: number | null }
 export interface BehaviorEvent {
-  id: string; event: string; userId: string | null; deviceId: string; sessionId: string; platform: string; page: string | null;
+  id: string; event: string; eventLabel: string; propsText: string; userId: string | null; deviceId: string; sessionId: string; platform: string; page: string | null;
   props: Record<string, unknown>; createdAt: string;
 }
+
+export type FeedbackStatus = 'new' | 'processing' | 'resolved' | 'ignored';
+export type FeedbackCategory = 'bug' | 'suggestion' | 'complaint' | 'other';
+export interface FeedbackItem {
+  id: string; userId: string | null; userLabel: string; isGuest: boolean;
+  category: FeedbackCategory; categoryLabel: string; content: string; contact: string;
+  images: Array<{ url: string; thumb: string }>; platform: string; clientEnv: Record<string, string>;
+  status: FeedbackStatus; adminNote: string; handledAt: string | null; createdAt: string;
+}
+export interface FeedbackList extends Paged<FeedbackItem> { statusCounts: Partial<Record<FeedbackStatus, number>> }
